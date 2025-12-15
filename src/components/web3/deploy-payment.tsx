@@ -133,7 +133,7 @@ export function DeployPayment({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={step === 'pending' || step === 'signing' ? undefined : handleClose}
+      onClose={step === 'pending' || step === 'signing' ? () => {} : handleClose}
       title={
         step === 'confirm' ? '🚀 Deploy Server' :
         step === 'signing' ? '✍️ Sign Transaction' :
