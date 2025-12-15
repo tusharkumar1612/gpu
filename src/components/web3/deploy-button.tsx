@@ -142,8 +142,7 @@ export default function Web3DeployButton({ onDeploy, disabled }: DeployButtonPro
                     <div className="text-left flex-1">
                       <p className="font-medium text-foreground">{connector.name}</p>
                       <p className="text-sm text-foreground-muted">
-                        {connector.name === 'WalletConnect' ? 'Scan QR with mobile wallet' :
-                         connector.name === 'Coinbase Wallet' ? 'Coinbase Wallet extension' : 'Connect'}
+                        {connector.name === 'Coinbase Wallet' ? 'Coinbase Wallet extension' : 'Connect'}
                       </p>
                     </div>
                     {isPending && (

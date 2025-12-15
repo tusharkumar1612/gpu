@@ -2,11 +2,7 @@
 
 import { http, createConfig } from 'wagmi';
 import { mainnet, polygon, arbitrum, optimism, sepolia } from 'wagmi/chains';
-import { injected, walletConnect, coinbaseWallet } from 'wagmi/connectors';
-
-// WalletConnect Project ID - Get yours at https://cloud.walletconnect.com
-// Using a demo ID that may have limited functionality
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '3a8170812b534d0ff9d794f19a901d64';
+import { injected, coinbaseWallet } from 'wagmi/connectors';
 
 export const config = createConfig({
   chains: [mainnet, polygon, arbitrum, optimism, sepolia],
@@ -15,16 +11,7 @@ export const config = createConfig({
     coinbaseWallet({
       appName: 'NeuralCloud',
     }),
-    walletConnect({
-      projectId,
-      showQrModal: true,
-      metadata: {
-        name: 'NeuralCloud',
-        description: 'Decentralized Compute Infrastructure',
-        url: 'https://neuralcloud.io',
-        icons: ['https://neuralcloud.io/icon.png'],
-      },
-    }),
+    // WalletConnect removed due to Turbopack build issues
   ],
   transports: {
     [mainnet.id]: http(),
