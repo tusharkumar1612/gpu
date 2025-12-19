@@ -14,7 +14,7 @@ export const platformConfig = {
   // Mock ETH price for USD conversion
   ETH_PRICE_USD: 2000,
   
-  // Supported payment tokens
+  // Supported payment token
   supportedTokens: ['ETH', 'MATIC', 'USDC'] as const,
 };
 
