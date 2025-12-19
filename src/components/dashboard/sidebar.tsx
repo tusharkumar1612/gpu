@@ -14,6 +14,7 @@ import {
   Cpu,
   ChevronLeft,
   ChevronRight,
+  ArrowDownLeft,
 } from 'lucide-react';
 import { useUIStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
@@ -22,6 +23,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: Server, label: 'My Servers', href: '/dashboard/servers' },
   { icon: PlusCircle, label: 'Create Server', href: '/dashboard/create-server' },
+  { icon: ArrowDownLeft, label: 'Transactions', href: '/dashboard/transactions' },
   { icon: CreditCard, label: 'Billing', href: '/dashboard/billing' },
   { icon: Wallet, label: 'Wallet', href: '/dashboard/wallet' },
   { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
@@ -168,4 +170,5 @@ export function Sidebar() {
     </>
   );
 }
+
 

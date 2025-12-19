@@ -247,3 +247,4 @@ function calculateMonthlyCost(config: ServerConfig): number {
 
 export { regions };
 
+

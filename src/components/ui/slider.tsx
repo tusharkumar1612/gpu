@@ -71,3 +71,4 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
 
 Slider.displayName = 'Slider';
 
+

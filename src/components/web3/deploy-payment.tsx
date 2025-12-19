@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   useSendTransaction, 
   useWaitForTransactionReceipt,
@@ -17,16 +17,19 @@ import {
   AlertTriangle,
   Server,
   Wallet,
-  ArrowRight,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { chainInfo } from '@/config/wagmi';
+import { platformConfig } from '@/config/platform';
+import { usePlatformStore } from '@/stores/platform-store';
 
-// Platform wallet address (in production, this would be your smart contract or multisig)
-const PLATFORM_WALLET = '0x742d35Cc6634C0532925a3b844Bc9e7595f5c3F0'; // Example address
+// Your wallet address - receives all payments
+const PLATFORM_WALLET = platformConfig.PLATFORM_WALLET;
 
 interface DeployPaymentProps {
   isOpen: boolean;
@@ -60,10 +63,24 @@ export function DeployPayment({
 
   const [step, setStep] = useState<'confirm' | 'signing' | 'pending' | 'success' | 'error'>('confirm');
   const [deployProgress, setDeployProgress] = useState(0);
+  const [copied, setCopied] = useState(false);
+  
+  // Track if we've already recorded this transaction
+  const transactionRecorded = useRef(false);
+  
+  // Platform store for recording transactions
+  const { addTransaction, addServer, updateServerStatus } = usePlatformStore();
 
   // Convert USD to ETH (mock rate: 1 ETH = $2000)
-  const ETH_PRICE = 2000;
+  const ETH_PRICE = platformConfig.ETH_PRICE_USD;
   const costETH = costUSD / ETH_PRICE;
+  
+  // Copy wallet address
+  const copyWalletAddress = () => {
+    navigator.clipboard.writeText(PLATFORM_WALLET);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   // Send transaction hook
   const { 
@@ -98,9 +115,46 @@ export function DeployPayment({
       }, 500);
       return () => clearInterval(interval);
     }
-    if (isConfirmed && txHash) {
+    if (isConfirmed && txHash && !transactionRecorded.current) {
+      transactionRecorded.current = true;
       setStep('success');
       setDeployProgress(100);
+      
+      // Record transaction in platform store
+      addTransaction({
+        type: 'deployment',
+        status: 'confirmed',
+        amount: costETH,
+        amountUSD: costUSD,
+        token: currentChain?.symbol || 'ETH',
+        fromAddress: address || '',
+        toAddress: PLATFORM_WALLET,
+        txHash: txHash,
+        serverName: serverName,
+        isSimulated: false,
+        chainId: chainId || 1,
+        chainName: currentChain?.name || 'Ethereum',
+      });
+      
+      // Add server to platform store
+      const serverId = addServer({
+        name: serverName,
+        status: 'provisioning',
+        config: serverConfig,
+        payment: {
+          amount: costETH,
+          amountUSD: costUSD,
+          token: currentChain?.symbol || 'ETH',
+          txHash: txHash,
+          isSimulated: false,
+        },
+      });
+      
+      // Simulate server becoming ready after a delay
+      setTimeout(() => {
+        updateServerStatus(serverId, 'running', `10.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`);
+      }, 5000);
+      
       // Trigger success callback after animation
       setTimeout(() => {
         onSuccess(txHash);
@@ -109,7 +163,7 @@ export function DeployPayment({
     if (isSendError || isConfirmError) {
       setStep('error');
     }
-  }, [isSending, txHash, isConfirmed, isSendError, isConfirmError, onSuccess]);
+  }, [isSending, txHash, isConfirmed, isSendError, isConfirmError, onSuccess, address, chainId, costETH, costUSD, currentChain, serverConfig, serverName, addTransaction, addServer, updateServerStatus]);
 
   const handlePayAndDeploy = () => {
     if (!isConnected) return;
@@ -123,6 +177,7 @@ export function DeployPayment({
   const handleClose = () => {
     setStep('confirm');
     setDeployProgress(0);
+    transactionRecorded.current = false;
     resetSend();
     onClose();
   };
@@ -210,11 +265,23 @@ export function DeployPayment({
                 <p className="text-xs text-foreground-muted">≈ ${costUSD}</p>
               </div>
             </div>
-            <div className="border-t border-glass-border pt-3 flex items-center justify-between">
-              <span className="text-foreground-muted text-sm">Your Balance</span>
-              <span className={`font-mono ${hasEnoughBalance ? 'text-success' : 'text-error'}`}>
-                {balanceNum.toFixed(4)} {currentChain?.symbol || 'ETH'}
-              </span>
+            <div className="border-t border-glass-border pt-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-foreground-muted text-sm">Your Balance</span>
+                <span className={`font-mono ${hasEnoughBalance ? 'text-success' : 'text-error'}`}>
+                  {balanceNum.toFixed(4)} {currentChain?.symbol || 'ETH'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-foreground-muted text-sm">Payment To</span>
+                <button 
+                  onClick={copyWalletAddress}
+                  className="flex items-center gap-1.5 font-mono text-xs text-neon-blue hover:text-neon-purple transition-colors"
+                >
+                  {PLATFORM_WALLET.slice(0, 6)}...{PLATFORM_WALLET.slice(-4)}
+                  {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                </button>
+              </div>
             </div>
           </div>
 
