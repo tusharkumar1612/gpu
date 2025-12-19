@@ -151,7 +151,7 @@ export default function TransactionsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card variant="glass">
+          <Card variant="default">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -171,7 +171,7 @@ export default function TransactionsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card variant="glass">
+          <Card variant="default">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -191,7 +191,7 @@ export default function TransactionsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <Card variant="glass">
+          <Card variant="default">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -211,7 +211,7 @@ export default function TransactionsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <Card variant="glass">
+          <Card variant="default">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -238,7 +238,7 @@ export default function TransactionsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
-        <Card variant="glass">
+        <Card variant="default">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
@@ -359,7 +359,7 @@ export default function TransactionsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
       >
-        <Card variant="glass">
+        <Card variant="default">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Server className="w-5 h-5 text-neon-purple" />
